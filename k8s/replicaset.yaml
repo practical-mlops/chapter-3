@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: joker-replicaset
+  labels:
+      app: fast-api
+spec:
+  template:
+    metadata:
+      name: joker
+      labels:
+          app: fast-api
+    spec:
+      containers:
+      - name: hello-joker
+        image: varunmallya/hello-joker:v1
+        ports:
+        - containerPort: 80
+  replicas: 3
+  selector:
+    matchLabels:
+      app: fast-api

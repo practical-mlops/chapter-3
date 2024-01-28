@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: test-configmap
+data:
+  database-url: "cloudsql-proxy.prod.company.data"
+  api-key: "AJNKJNKCEKK390"

@@ -1,0 +1,63 @@
+image: docker:20.10.16
+variables:
+  # When you use the dind service, you must instruct Docker to talk with
+  # the daemon started inside of the service. The daemon is available
+  # with a network connection instead of the default
+  # /var/run/docker.sock socket. Docker 19.03 does this automatically
+  # by setting the DOCKER_HOST in
+  # https://github.com/docker-library/docker/blob/d45051476babc297257df490d22cbd806f1b11e4/19.03/docker-entrypoint.sh#L23-L29
+  #
+  # The 'docker' hostname is the alias of the service container as described at
+  # https://docs.gitlab.com/ee/ci/services/#accessing-the-services.
+  #
+  # Specify to Docker where to create the certificates. Docker
+  # creates them automatically on boot, and creates
+  # `/certs/client` to share between the service and job
+  # container, thanks to volume mount from config.toml
+  DOCKER_TLS_CERTDIR: "/certs"
+stages:
+  - test
+  - build
+  - update
+
+services:
+  - docker:20.10.16-dind
+
+
+test_code:
+    stage: test
+    image:
+      name: python:3.10
+    script:
+      - echo "testing code"
+      - pip install -r $CI_PROJECT_DIR/requirements.txt
+      - pytest $CI_PROJECT_DIR/
+
+build_image:
+    stage: build
+    script:
+      - echo "building docker image"
+      - cd $CI_PROJECT_DIR
+      - echo ${CI_COMMIT_SHA:0:8}
+      - docker build . -t varunmallya/hello-joker:${CI_COMMIT_SHA:0:8}
+      - docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
+      - docker push varunmallya/hello-joker:${CI_COMMIT_SHA:0:8}
+ 
+update_helm_chart:
+    stage: update
+    image:
+      name: python:3.10
+    before_script:
+      - apt-get update && apt-get install git
+      - git clone https://${GITLAB_USER_NAME}:${GITLAB_ACCESS_TOKEN}@gitlab.com/learn-mlops/gitlab-ci-example.git
+      - cd $CI_PROJECT_DIR
+      - wget https://github.com/mikefarah/yq/releases/download/v4.2.0/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
+      - git config --global user.email "${GITLAB_USER_EMAIL}"
+      - git config --global user.name "${GITLAB_USER_NAME}"
+    script:
+      - yq e -i ".image.tag |= \"${CI_COMMIT_SHA:0:8}\""  hello-joker/values.yaml
+      - git add hello-joker/values.yaml
+      - git commit -m "[skip ci]Update helm chart ${CI_COMMIT_SHA:0:8}"
+      - git push https://${GITLAB_USER_NAME}:${GITLAB_ACCESS_TOKEN}@gitlab.com/learn-mlops/gitlab-ci-example.git HEAD:main
+  
+

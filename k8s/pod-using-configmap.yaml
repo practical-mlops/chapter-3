@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-using-configmap
+spec:
+  containers:
+    - name: container-using-configmap
+      image: ubuntu
+      env:
+        - name: DATABASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: test-configmap
+              key: database-url
+        - name: API_KEY
+          valueFrom:
+            configMapKeyRef:
+              name: test-configmap
+              key: api-key

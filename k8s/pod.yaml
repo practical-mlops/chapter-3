@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: joker
+  labels:
+      app: fast-api
+spec:
+  containers:
+  - name: hello-joker
+    image: varunmallya/hello-joker:v1
+    ports:
+    - containerPort: 80
