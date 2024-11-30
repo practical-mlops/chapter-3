@@ -11,7 +11,7 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 
 COPY . /app
 
-EXPOSE 80
+EXPOSE 8083
 ENV PYTHONPATH "/app"
 
 RUN chmod +x /app/entrypoint.sh 
