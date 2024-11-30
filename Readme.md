@@ -1,6 +1,18 @@
 # Design a Machine Learning System (From Scratch) Chapter 3
 ## Getting Started
 
+Setup a virtual envrionment by running
+
+```
+python3.10 -m venv myvenv
+source myvenv/bin/activate
+```
+
+Install all the requirements by running
+```
+pip install -r requirements.txt
+```
+
 The Fast API app is defined in main.py, to run it locally we use the fastapi run command
 
 ```
