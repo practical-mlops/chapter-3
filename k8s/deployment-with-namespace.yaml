@@ -16,7 +16,7 @@ spec:
       - name: hello-joker
         image: varunmallya/hello-joker:v1
         ports:
-        - containerPort: 80
+        - containerPort: 8083
   replicas: 3
   selector:
     matchLabels:

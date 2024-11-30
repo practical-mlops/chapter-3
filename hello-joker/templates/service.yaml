@@ -13,5 +13,3 @@ spec:
       name: http
   selector:
     {{- include "hello-joker.selectorLabels" . | nindent 4 }}
-
-:q
