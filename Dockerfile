@@ -1,4 +1,4 @@
-FROM python:3.10-slim-buster 
+FROM python:3.10-slim-bookworm
 WORKDIR /app 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
