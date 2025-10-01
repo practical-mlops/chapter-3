@@ -39,9 +39,9 @@ build_image:
       - echo "building docker image"
       - cd $CI_PROJECT_DIR
       - echo ${CI_COMMIT_SHA:0:8}
-      - docker build . -t varunmallya/hello-joker:${CI_COMMIT_SHA:0:8}
+      - docker build . -t ${DOCKER_USERNAME}/hello-joker:${CI_COMMIT_SHA:0:8}
       - docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
-      - docker push varunmallya/hello-joker:${CI_COMMIT_SHA:0:8}
+      - docker push ${DOCKER_USERNAME}/hello-joker:${CI_COMMIT_SHA:0:8}
  
 update_helm_chart:
     stage: update
