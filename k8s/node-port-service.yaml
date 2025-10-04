@@ -6,7 +6,7 @@ spec:
   type: NodePort
   ports:
     - targetPort: 8083
-      port: 80
+      port: 8900
       nodePort: 30420
   selector:
       app: fast-api

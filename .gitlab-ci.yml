@@ -39,9 +39,9 @@ build_image:
       - echo "building docker image"
       - cd $CI_PROJECT_DIR
       - echo ${CI_COMMIT_SHA:0:8}
-      - docker build . -t varunmallya/hello-joker:${CI_COMMIT_SHA:0:8}
+      - docker build . -t ${DOCKER_USERNAME}/hello-joker:${CI_COMMIT_SHA:0:8}
       - docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
-      - docker push varunmallya/hello-joker:${CI_COMMIT_SHA:0:8}
+      - docker push ${DOCKER_USERNAME}/hello-joker:${CI_COMMIT_SHA:0:8}
  
 update_helm_chart:
     stage: update
@@ -49,15 +49,15 @@ update_helm_chart:
       name: python:3.10
     before_script:
       - apt-get update && apt-get install git
-      - git clone https://${GITLAB_USER_NAME}:${GITLAB_ACCESS_TOKEN}@gitlab.com/learn-mlops/gitlab-ci-example.git
+      - git clone "https://x:${GITLAB_ACCESS_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
       - cd $CI_PROJECT_DIR
       - wget https://github.com/mikefarah/yq/releases/download/v4.2.0/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
       - git config --global user.email "${GITLAB_USER_EMAIL}"
       - git config --global user.name "${GITLAB_USER_NAME}"
+      - git remote add merge_origin
+
     script:
       - yq e -i ".image.tag |= \"${CI_COMMIT_SHA:0:8}\""  hello-joker/values.yaml
       - git add hello-joker/values.yaml
       - git commit -m "[skip ci]Update helm chart ${CI_COMMIT_SHA:0:8}"
-      - git push https://${GITLAB_USER_NAME}:${GITLAB_ACCESS_TOKEN}@gitlab.com/learn-mlops/gitlab-ci-example.git HEAD:main
-  
-
+      - git push origin HEAD:$CI_COMMIT_REF_NAME

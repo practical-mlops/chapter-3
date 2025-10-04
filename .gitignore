@@ -1,2 +1,5 @@
 myvenv
 __pycache__/*
+.idea
+redis
+redis-22.0.7.tgz
